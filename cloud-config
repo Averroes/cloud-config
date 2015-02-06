@@ -22,7 +22,8 @@ coreos:
   units:
     - name: iptables-restore.service
       enable: true
-      
+    - name: iptables-restore.service
+      command: start
   units:
   - name: sshd.socket
     command: restart
@@ -89,46 +90,46 @@ write_files:
      -A INPUT -p icmp -m icmp --icmp-type 5 -j ACCEPT
      
      # Alternate Host Address
-     -A INPUT -p icmp -m icmp --icmp-type   6 -j ACCEPT
+     -A INPUT -p icmp -m icmp --icmp-type 6 -j ACCEPT
      
      #     Echo
-     -A INPUT -p icmp -m icmp --icmp-type   8-j ACCEPT
+     -A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
      
      # Router Selection
-     -A INPUT -p icmp -m icmp --icmp-type  10 -j ACCEPT
+     -A INPUT -p icmp -m icmp --icmp-type 10 -j ACCEPT
      
      # Time Exceeded
-     -A INPUT -p icmp -m icmp --icmp-type  11 -j ACCEPT
+     -A INPUT -p icmp -m icmp --icmp-type 11 -j ACCEPT
      
      # Parameter Problem
      -A INPUT -p icmp -m icmp --icmp-type 12 -j ACCEPT
      
      # Timestamp
-     -A INPUT -p icmp -m icmp --icmp-type  13 -j ACCEPT
+     -A INPUT -p icmp -m icmp --icmp-type 13 -j ACCEPT
      
      # Timestamp Reply
-     -A INPUT -p icmp -m icmp --icmp-type  14 -j ACCEPT
+     -A INPUT -p icmp -m icmp --icmp-type 14 -j ACCEPT
      
      # Information Request
-     -A INPUT -p icmp -m icmp --icmp-type  15 -j ACCEPT
+     -A INPUT -p icmp -m icmp --icmp-type 15 -j ACCEPT
      
      # Information Reply
-     -A INPUT -p icmp -m icmp --icmp-type  16 -j ACCEPT
+     -A INPUT -p icmp -m icmp --icmp-type 16 -j ACCEPT
      
      # Address Mask Request
-     -A INPUT -p icmp -m icmp --icmp-type  17 -j ACCEPT
+     -A INPUT -p icmp -m icmp --icmp-type 17 -j ACCEPT
      
      # Address Mask Reply
-     -A INPUT -p icmp -m icmp --icmp-type  18 -j ACCEPT
+     -A INPUT -p icmp -m icmp --icmp-type 18 -j ACCEPT
      
      # Datagram Conversion Error
-     -A INPUT -p icmp -m icmp --icmp-type  31 -j ACCEPT
+     -A INPUT -p icmp -m icmp --icmp-type 31 -j ACCEPT
      
      # IPv6 Where-Are-You
-     -A INPUT -p icmp -m icmp --icmp-type  33 -j ACCEPT
+     -A INPUT -p icmp -m icmp --icmp-type 33 -j ACCEPT
      
      # IPv6 I-Am-Here
-     -A INPUT -p icmp -m icmp --icmp-type  34 -j ACCEPT
+     -A INPUT -p icmp -m icmp --icmp-type 34 -j ACCEPT
      
      # Allow your IP address
      -A INPUT -s XXX.XXX.XXX.XXXX -j ACCEPT
