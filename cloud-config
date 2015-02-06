@@ -1,4 +1,23 @@
 #cloud-config
+
+hostname: akey-server
+ssh_authorized_keys:
+    - 'ssh-rsa HERE YOUR RSA KEY== rsa-key-20150101'
+write_files:
+    -
+        path: /etc/resolv.conf
+        permissions: '0644'
+        owner: root
+        content: "nameserver 8.8.8.8\nnameserver 8.8.4.4\n"
+users:
+    -
+        name: core
+        groups:
+            - sudo
+            - docker
+        ssh-authorized-keys:
+            - 'ssh-rsa HERE YOUR RSA KEY== rsa-key-20150131 rsa-key-20150101'
+
 coreos:
   units:
     - name: iptables-restore.service
@@ -16,16 +35,20 @@ write_files:
   - path: /var/lib/iptables/rules-save 
     permissions: 0644
     owner: root:root
+    
     # Clean tables and rules
     content: |
      *filter
      :INPUT DROP [0:0]
      :FORWARD DROP [0:0]
      :OUTPUT ACCEPT [0:0]
+     
      # Allow loopback
      -A INPUT -i lo -j ACCEPT
+     
      # Allow your network interface (change en0 by eth0 or wlan0 etc ..)
      -A INPUT -i en0 -j ACCEPT
+     
      # Don't break the etablished connections 
      -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 
@@ -33,64 +56,85 @@ write_files:
      # FTP data transfer     
      -A OUTPUT -p tcp --dport 20 -j ACCEPT
      -A INPUT -p tcp --dport 20 -j ACCEPT
+     
      # FTP control
      -A OUTPUT -p tcp --dport 21 -j ACCEPT
      -A INPUT -p tcp --dport 21 -j ACCEPT
+     
      # Secure Shell (SSH)—used for secure logins, file transfers (scp, sftp) and port forwarding
      -A INPUT -p tcp -m tcp --dport 2222 -j ACCEPT
+     
      # Domain Name System (DNS)
      -A INPUT -p udp -m udp --dport 53 -j ACCEPT
      -A INPUT -p tcp -m tcp --dport 53 -j ACCEPT
+     
      # http and https
      -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
      -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+     
      # Network Time Protocol (NTP)—used for time synchronization
      -A OUTPUT -p udp --dport 123 -j ACCEPT
 
      # ICMP
      # Echo Reply
      -A INPUT -p icmp -m icmp --icmp-type 0 -j ACCEPT
+     
      # Destination Unreachable
      -A INPUT -p icmp -m icmp --icmp-type 3 -j ACCEPT
+     
      # Source Quench
      -A INPUT -p icmp -m icmp --icmp-type 4 -j ACCEPT
+     
      # Redirect
      -A INPUT -p icmp -m icmp --icmp-type 5 -j ACCEPT
+     
      # Alternate Host Address
      -A INPUT -p icmp -m icmp --icmp-type   6 -j ACCEPT
+     
      #     Echo
      -A INPUT -p icmp -m icmp --icmp-type   8-j ACCEPT
+     
      # Router Selection
      -A INPUT -p icmp -m icmp --icmp-type  10 -j ACCEPT
+     
      # Time Exceeded
      -A INPUT -p icmp -m icmp --icmp-type  11 -j ACCEPT
+     
      # Parameter Problem
      -A INPUT -p icmp -m icmp --icmp-type 12 -j ACCEPT
+     
      # Timestamp
      -A INPUT -p icmp -m icmp --icmp-type  13 -j ACCEPT
+     
      # Timestamp Reply
      -A INPUT -p icmp -m icmp --icmp-type  14 -j ACCEPT
+     
      # Information Request
      -A INPUT -p icmp -m icmp --icmp-type  15 -j ACCEPT
+     
      # Information Reply
      -A INPUT -p icmp -m icmp --icmp-type  16 -j ACCEPT
+     
      # Address Mask Request
      -A INPUT -p icmp -m icmp --icmp-type  17 -j ACCEPT
+     
      # Address Mask Reply
      -A INPUT -p icmp -m icmp --icmp-type  18 -j ACCEPT
+     
      # Datagram Conversion Error
      -A INPUT -p icmp -m icmp --icmp-type  31 -j ACCEPT
+     
      # IPv6 Where-Are-You
      -A INPUT -p icmp -m icmp --icmp-type  33 -j ACCEPT
+     
      # IPv6 I-Am-Here
      -A INPUT -p icmp -m icmp --icmp-type  34 -j ACCEPT
+     
      # Allow your IP address
-     -A INPUT -s 195.154.126.79 -j ACCEPT
-     -A OUTPUT -d 195.154.126.79 -j ACCEPT
-     -A INPUT -s 198.50.150.125 -j ACCEPT
-     -A OUTPUT -d 198.50.150.125 -j ACCEPT
-     -A INPUT -s 176.189.113.84 -j ACCEPT
-     -A OUTPUT -d 176.189.113.84 -j ACCEPT
+     -A INPUT -s XXX.XXX.XXX.XXXX -j ACCEPT
+     -A OUTPUT -d XXX.XXX.XXX.XXXX -j ACCEPT
+     -A INPUT -s XXX.XXX.XXX.XXXX -j ACCEPT
+     -A OUTPUT -d XXX.XXX.XXX.XXXX -j ACCEPT
      
      # Post Office Protocol v3 (POP3)
      -A INPUT -p tcp --dport 110 -j ACCEPT
