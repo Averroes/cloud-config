@@ -4,20 +4,17 @@ hostname: akey-server
 ssh_authorized_keys:
     - 'ssh-rsa HERE YOUR RSA KEY== rsa-key-20150101'
 write_files:
-    -
-        path: /etc/resolv.conf
+    -   path: /etc/resolv.conf
         permissions: '0644'
         owner: root
         content: "nameserver 8.8.8.8\nnameserver 8.8.4.4\n"
 users:
-    -
-        name: core
+    -   name: core
         groups:
             - sudo
             - docker
         ssh-authorized-keys:
             - 'ssh-rsa HERE YOUR RSA KEY== rsa-key-20150131 rsa-key-20150101'
-
 coreos:
   units:
     - name: iptables-restore.service
@@ -31,7 +28,18 @@ coreos:
       [Socket]
       ListenStream=2222
       Accept=yes
-      
+  etcd:
+    # generate a new token for each unique cluster from https://discovery.etcd.io/new
+    discovery: https://discovery.etcd.io/<token>
+    # multi-region and multi-cloud deployments need to use $public_ipv4
+    addr: $private_ipv4:4001
+    peer-addr: $private_ipv4:7001
+  units:
+    - name: etcd.service
+      command: start
+    - name: fleet.service
+      command: start
+    
 write_files:
   - path: /var/lib/iptables/rules-save 
     permissions: 0644
@@ -184,6 +192,6 @@ write_files:
       Subsystem sftp internal-sftp
 
       PermitRootLogin no
-      AllowUsers core
+      AllowUsers core, otherLoginUser
       PasswordAuthentication no
       ChallengeResponseAuthentication no
